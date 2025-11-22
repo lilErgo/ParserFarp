@@ -2,77 +2,66 @@ from selenium import webdriver
 from selenium.webdriver.firefox.service import Service
 from selenium.webdriver.common.by import By
 import time
+import re
+import csv
+from typing import Dict, List, Any
 
 class Parser:
+    def opener(self, file_for_open: str, mode: str):
+        """Proper file opener that returns file object or content based on mode"""
+        if 'r' in mode:
+            with open(file_for_open, mode, encoding='utf-8') as file:
+                return file.read() if mode == 'r' else file
+        else:
+            return open(file_for_open, mode, encoding='utf-8')
+    
     def site_parser(self):
-
         driver = webdriver.Firefox()
-        url = 'https://www.farpost.ru/vladivostok/rabota/vacansii/+/%D0%9C%D0%BE%D0%B9%D1%89%D0%B8%D0%BA/#center=131.9884223925729%2C43.16019500841343&zoom=11.530948807087961'
+        url = 'https://www.farpost.ru/vladivostok/realty/sell_flats/?agentType%5B%5D=agencyFee&agentType%5B%5D=agencyNoFee&agentType%5B%5D=privatePerson#center=131.93457102696428%2C43.09301744760717&zoom=10.364544025632991'
 
         driver.get(url)
         time.sleep(10)
 
         static = driver.find_element(By.CLASS_NAME, "native")
-
         a = str(static.text)
         print(a)
+        
         with open('log.txt', 'w', encoding='utf-8') as file:
             file.write(str(static.text))
 
         driver.quit()
 
     def sort_for_4_rows(self):
-        import re
-        with open('log.txt', 'r', encoding='utf-8') as file:
-            rows = file.readlines()  # Читаем все строки в список
+        content = self.opener('log.txt', 'r')
+        if isinstance(content, str):
+            rows = content.split('\n')
+        else:
+            rows = content.readlines()
+            content.close()
 
         result = []
-        for i, row in enumerate(rows, 1):
-            result.append(row.rstrip())  # Убираем лишние переносы
-            if re.findall(pattern=r'^\d+$',string=row):  # После каждой строки глазика (количество просмотров) добавляется пробел
-                result.append("")  # Добавляем пустую строку
+        for row in rows:
+            result.append(row.rstrip())
+            if re.findall(pattern=r'^\d+$', string=row):
+                result.append("")
 
-        # Записываем обратно в файл
         with open('log.txt', 'w', encoding='utf-8') as file:
-            file.write('\n'.join(result)) # Каждой группе элементов в 'тут какая-нибудь инфа'  последобаляется переход на новую строку
+            file.write('\n'.join(result))
 
-    def converter_from_txt_to_csv(self):
-        import re
-        import csv
-
-        with open('log.txt', 'r', encoding='utf-8') as file:
-            lines = file.readlines()
-            i = 0
-            
-            vacancies = []
-            while i < len(lines):
-                line_pivot = lines[i]
-                if re.search(pattern=r'[^a-zA-Z]\d₽',string=line_pivot):
-                    salary = line_pivot
-                    position = lines[i + 1] if i + 1 < len(lines) else ""
-                    location = lines[i + 2] if i + 2 < len(lines) else ""
-                    other_info = lines[i + 3] if i + 3 < len(lines) else ""
-
-                    vacancy = {
-                        'salary': salary,
-                        'position': position,
-                        'location': location,
-                        'other_info': other_info
-                    }
-                    vacancies.append(vacancy)
-                    i += 3
-
-                else:
-                    i += 1
-
-        with open('sorted_vacancies.csv', 'w', newline='', encoding='utf-8') as csvfile:
-            fieldnames = ['salary', 'position', 'location', 'other_info']
-            writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
-            writer.writeheader()
-
-            for vacancy in vacancies:
-                writer.writerow(vacancy)
-
-Parser().site_parser()
-Parser().sort_for_4_rows()
-Parser().converter_from_txt_to_csv()
+    def remover_clean_rows(self, path_to_file: str) -> List[str]:
+        """Read file and return cleaned lines without empty rows"""
+        content = self.opener(path_to_file, 'r')
+        if isinstance(content, str):
+            lines = content.split('\n')
+        else:
+            lines = content.readlines()
+            content.close()
+        
+        # Clean and filter lines
+        cleaned_lines = [line.strip() for line in lines if line.strip()]
+        return cleaned_lines
+    
+    def 
+   
+parser = Parser()
+parser.sort_for_4_rows()
