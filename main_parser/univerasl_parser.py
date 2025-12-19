@@ -92,11 +92,11 @@ class Parser:
                 can change encoding by default use ANSI for auto exel
             """
 
-        with open(f'{UM.time_now()}.csv','w',encoding=encoding,newline='') as csv_file:
+        with open(f'{UM.time_now()}.csv','w',encoding=encoding,newline='',) as csv_file:
             """
                 can change encoding by default use ANSI for auto exel
             """
-            writter = csv.writer(csv_file)
+            writter = csv.writer(csv_file,delimiter=';')
             writter.writerow(headers)
             for row in list_of_data:
                 writter.writerow(row)
