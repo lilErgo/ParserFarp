@@ -7,9 +7,15 @@ class Parser:
 
     def setUP(self):
         from selenium import webdriver
-        self.driver = webdriver.Chrome()
+        from selenium.webdriver.chrome.options import Options
+                
+        chrome_options = Options()
+        chrome_options.add_argument("--headless")
+
+        self.driver = webdriver.Chrome(options=chrome_options)
         self.driver.implicitly_wait(5)
         self.driver.get(self.url)
+        # self.driver.minimize_window()
         return self.driver
         
     def settings(self,setting_driver):
@@ -52,7 +58,7 @@ class Parser:
         page_seller.find_element(By.XPATH,"//a[contains(text(),'Агентство с комиссией')]").click()
         page_seller.find_element(By.XPATH,"//a[contains(text(),'Застройщик')]").click()
         import time
-        time.sleep(5)
+        time.sleep(8)
         self.driver = setting_driver
         return setting_driver
 
@@ -80,6 +86,8 @@ class Parser:
     def converter_to_csv(self,list_of_data,headers:list,encoding='ANSI'):
         import csv
         from Universal_methods import UM
+        import sys
+
         """
                 can change encoding by default use ANSI for auto exel
             """
@@ -92,7 +100,11 @@ class Parser:
             writter.writerow(headers)
             for row in list_of_data:
                 writter.writerow(row)
-
+        self.driver.close()
+        sys.stdout.write('Задача выполнена')
+        import time
+        time.sleep(3)
+        sys.exit(0)
 
     
 par = Parser('https://www.farpost.ru/vladivostok/realty/sell_flats/#center=131.92590272211407%2C43.16087466658294&zoom=10.897218500958004')
