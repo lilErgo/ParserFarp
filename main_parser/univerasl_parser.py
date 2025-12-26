@@ -101,10 +101,7 @@ class Parser:
             for row in list_of_data:
                 writter.writerow(row)
         self.driver.close()
-        sys.stdout.write('Задача выполнена')
-        import time
-        time.sleep(3)
-        sys.exit(0)
+        
 
     
 par = Parser('https://www.farpost.ru/vladivostok/realty/sell_flats/#center=131.92590272211407%2C43.16087466658294&zoom=10.897218500958004')
