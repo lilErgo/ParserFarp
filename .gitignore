@@ -1,5 +1,5 @@
-dist*
-build*
-formated_text*
-ParserEnv*
-tests*
+dist/
+build/
+formated_text/
+ParserEnv/
+tests/
