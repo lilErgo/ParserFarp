@@ -3,3 +3,4 @@ build/
 formated_text/
 ParserEnv/
 tests/
+*spec
